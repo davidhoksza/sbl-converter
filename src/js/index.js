@@ -53,10 +53,49 @@ function processInputFile(event) {
             $('#inputType option:contains(SBML)').attr('selected','selected');
         }
 
+        preview();
+
     };
 
     reader.readAsText($('#inputFile')[0].files[0]);
 }
+
+function preview(apiAddress, body){
+
+    var inputType = modInput($("#inputType option:selected").text());
+    var apiAddress = `${minervaApiConvert}image/${inputType}:svg`;
+
+    $("#preview-card .card-body").empty();
+    $('#preview-card').removeClass('d-none');
+    $("#preview-card .card-header").empty();
+    $("#preview-card .card-header").append('Retrieving preview <i id=\"spinner\" class=\"fa fa-spinner fa-spin fa-1x fa-fw\"></i>');
+
+    fetch(createRequest(apiAddress, inputFile))
+        .then(response => {
+            $("#preview-card .card-header").empty();
+            $("#preview-card .card-header").append('Preview');
+            if (response.status === 200) {
+                return response.text();
+            } else {
+                throw new Error('Something went wrong on api server!');
+            }
+        })
+        .then(svg => {
+            $("#preview-card .card-body").append(svg);
+        }).catch(error => {
+            $("#preview-card .card-header").empty();
+            $("#preview-card .card-header").append('Preview');
+    });
+
+}
+
+var modInput = function (input) {
+    if (input === "CellDesigner") input += "_SBML";
+    if (input === "SBGN") input += "-ML";
+    if (input === "PDF" || input === "PNG" || input === "SVG") input = input.toLowerCase(); //converting to lower case since image format names are required to be lower case by the MIENRVA API (in verstion 13 - should change in the future to be case insensitive)
+
+    return input;
+} ;
 
 var convert = function() {
 
@@ -88,14 +127,6 @@ var convert = function() {
         return;
     }
 
-    var modInput = function (input) {
-        if (input === "CellDesigner") input += "_SBML";
-        if (input === "SBGN") input += "-ML";
-        if (input === "PDF" || input === "PNG" || input === "SVG") input = input.toLowerCase(); //converting to lower case since image format names are required to be lower case by the MIENRVA API (in verstion 13 - should change in the future to be case insensitive)
-
-        return input;
-    } ;
-
     var inputType = modInput($("#inputType option:selected").text());
     var outputType = modInput($("#outputType option:selected").text());
 
@@ -106,13 +137,13 @@ var convert = function() {
     var apiAddress = isImage ? `${minervaApiConvert}image/`: minervaApiConvert ;
     apiAddress += `${inputType}:${outputType}`;
 
-    var headers = new Headers();
-    headers.append('Cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
-    headers.append('Set-cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
-    const request = new Request(apiAddress, {method: 'POST', body: inputFile, headers: headers/*, credentials: "include"*/});
+    // var headers = new Headers();
+    // headers.append('Cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
+    // headers.append('Set-cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
+    // const request = new Request(apiAddress, {method: 'POST', body: inputFile, headers: headers/*, credentials: "include"*/});
 
     $("#spinner").removeClass('d-none');
-    fetch(request)
+    fetch(createRequest(apiAddress, inputFile))
         .then(response => {
             $("#spinner").addClass('d-none');
             if (response.status === 200) {
@@ -133,3 +164,10 @@ var convert = function() {
         console.error(error);
     });
 };
+
+function createRequest(apiAddress, body){
+    var headers = new Headers();
+    headers.append('Cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
+    headers.append('Set-cookie', `MINERVA_ATUH_TOKEN=${minervaToken}`);
+    return new Request(apiAddress, {method: 'POST', body: body, headers: headers/*, credentials: "include"*/});
+}
