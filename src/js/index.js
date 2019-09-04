@@ -86,7 +86,7 @@ var convert = function() {
 
     var modInput = function (input) {
         if (input === "CellDesigner") input += "_SBML";
-        if (input === "SBGN") input += "_ML";
+        if (input === "SBGN") input += "-ML";
         if (input === "PDF" || input === "PNG" || input === "SVG") input = input.toLowerCase(); //converting to lower case since image format names are required to be lower case by the MIENRVA API (in verstion 13 - should change in the future to be case insensitive)
 
         return input;
