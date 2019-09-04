@@ -34,6 +34,10 @@ function getMinervaToken() {
 
 function processInputFile(event) {
 
+    var auxVal = $('#inputFile').val();
+
+    if (!auxVal) return;
+
     fileName = $('#inputFile').val().split("\\").pop();
     $('.custom-file-label').addClass("selected").html(fileName);
 
