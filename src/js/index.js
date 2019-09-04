@@ -87,7 +87,7 @@ var convert = function() {
     var modInput = function (input) {
         if (input === "CellDesigner") input += "_SBML";
         if (input === "SBGN") input += "_ML";
-        if (input === "PDF" || input === "PNG" || input === "SVG") input = input.toLowerCase();
+        if (input === "PDF" || input === "PNG" || input === "SVG") input = input.toLowerCase(); //converting to lower case since image format names are required to be lower case by the MIENRVA API (in verstion 13 - should change in the future to be case insensitive)
 
         return input;
     } ;
@@ -96,10 +96,10 @@ var convert = function() {
     var outputType = modInput($("#outputType option:selected").text());
 
 
-    var isImage = outputType === "PDF" || outputType === "PNG" || outputType === "SVG";
-    var isBinary = outputType === "PDF" || outputType === "PNG";
+    var isImage = outputType === "pdf" || outputType === "png" || outputType === "svg";
+    var isBinary = outputType === "pdf" || outputType === "png";
 
-    var apiAddress = isImage ? minervaApiConvert : `${minervaApiConvert}image/`;
+    var apiAddress = isImage ? `${minervaApiConvert}image/`: minervaApiConvert ;
     apiAddress += `${inputType}:${outputType}`;
 
     var headers = new Headers();
