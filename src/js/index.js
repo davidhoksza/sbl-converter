@@ -46,11 +46,11 @@ function processInputFile(event) {
         inputFile = event.target.result;
 
         if (inputFile.indexOf("<celldesigner:extension>") >= 0) {
-            $('#inputType option:contains(CellDesigner)').attr('selected','selected');
+            $('#inputType option:contains(CellDesigner)').prop('selected',true);
         } else if (inputFile.indexOf('<sbgn') >= 0) {
-            $('#inputType option:contains(SBGN)').attr('selected','selected');
+            $('#inputType option:contains(SBGN)').prop('selected',true);
         } else {
-            $('#inputType option:contains(SBML)').attr('selected','selected');
+            $('#inputType option:contains(SBML)').prop('selected',true);
         }
 
         preview();
