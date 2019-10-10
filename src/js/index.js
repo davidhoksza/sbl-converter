@@ -155,7 +155,7 @@ var convert = function() {
         .then(blob => {
 
             var suffix = outputType.toLowerCase();
-            if (suffix === "celldesigner") suffix = 'xml';
+            if (suffix.indexOf("celldesigner") >= 0) suffix = 'xml';
 
             saveAs(blob, `${fileName}.${suffix}`);
 
